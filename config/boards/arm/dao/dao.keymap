@@ -113,7 +113,7 @@
                         bindings = <
           &bootloader   &none          &none          &none          &none          &none          &kp C_STOP     &kp C_PP       &kp C_VOL_UP   &none          &none          &bootloader
           &bt BT_CLR    &bt BT_SEL 0   &bt BT_SEL 1   &bt BT_SEL 2   &bt BT_SEL 3   &bt BT_SEL 4   &none          &kp C_PREV     &kp C_VOL_DN   &kp C_NEXT     &none          &none
-          &sys_reset    &none          &none          &none          &none          &none          &none          &none          &kp C_MUTE     &none          &none          &sys_reset
+          &reset        &none          &none          &none          &none          &none          &none          &none          &kp C_MUTE     &none          &none          &reset
                                              &none         &none          &none         &none          &none         &none
                         >;
                 };
