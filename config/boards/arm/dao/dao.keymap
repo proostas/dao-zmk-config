@@ -14,7 +14,7 @@
 #define QWN 3
 #define NUM 4
 #define FUN 5
-#define ADJ 6
+#define MED 6
 
 &lt { 
     flavor = "balanced";
@@ -47,7 +47,7 @@
           &none     &kp Q         &kp W         &kp F         &kp P             &kp B         &kp J         &kp L            &kp U         &kp Y        &kp SQT       &none       
           &none     &mt LGUI A    &mt LALT R    &mt LSHFT S   &mt LCTRL T       &kp G         &kp M         &mt RCTRL N      &mt RSHFT E   &mt RALT I   &mt RGUI O    &none
           &none     &kp Z         &kp X         &kp C         &kp D             &kp V         &kp K         &kp H            &kp COMMA     &kp DOT      &kp FSLH      &none
-                                            &mo ADJ   &lt CON BSPC   &lt CON RET   &lt FUN TAB   &lt NUM SPACE   &mo ADJ
+                                            &mo MED   &lt CON BSPC   &lt CON RET   &lt FUN TAB   &lt NUM SPACE   &mo MED
                         >;
                 };
                 colemak_nav_layer {
@@ -63,7 +63,7 @@
           &none     &kp Q         &kp W         &kp E         &kp R             &kp T         &kp Y         &kp U            &kp I         &kp O        &kp P         &none       
           &none     &mt LGUI A    &mt LALT S    &mt LSHFT D   &mt LCTRL F       &kp G         &kp H         &mt RCTRL J      &mt RSHFT K   &mt RALT L   &mt RGUI SEMI &kp SQT
           &none     &kp Z         &kp X         &kp C         &kp V             &kp B         &kp N         &kp M            &kp COMMA     &kp DOT      &kp FSLH      &none
-                                            &mo ADJ   &lt QWN BSPC   &lt CON RET   &lt FUN TAB   &lt NUM SPACE   &mo ADJ
+                                            &mo MED   &lt QWN BSPC   &lt CON RET   &lt FUN TAB   &lt NUM SPACE   &mo MED
                         >;
                 };
                 qwerty_nav_layer {
@@ -91,12 +91,12 @@
                                             &none      &kp SPACE      &kp TAB      &none         &none           &none
                         >;
                 };
-                adjust_layer {
+                media_layer {
                         bindings = <
- &bootloader   &none          &none          &none          &none          &none          &none          &none          &none          &none          &none          &bootloader
- &bt BT_CLR    &bt BT_SEL 0   &bt BT_SEL 1   &bt BT_SEL 2   &bt BT_SEL 3   &bt BT_SEL 4   &bt BT_SEL 4   &bt BT_SEL 3   &bt BT_SEL 2   &bt BT_SEL 1   &bt BT_SEL 0   &bt BT_CLR
- &sys_reset        &none          &none          &none          &none          &none          &none          &none          &none          &none          &none          &sys_reset
-                                             &trans         &none          &trans         &none          &trans         &trans
+          &bootloader   &none          &none          &none          &none          &none          &kp C_STOP     &kp C_PP       &kp C_VOL_UP   &none          &none          &bootloader
+          &bt BT_CLR    &bt BT_SEL 0   &bt BT_SEL 1   &bt BT_SEL 2   &bt BT_SEL 3   &bt BT_SEL 4   &none          &kp C_PREV     &kp C_VOL_DN   &kp C_NEXT     &none          &none
+          &sys_reset    &none          &none          &none          &none          &none          &none          &none          &kp C_MUTE     &none          &none          &sys_reset
+                                             &none         &none          &none         &none          &none         &none
                         >;
                 };
         };
