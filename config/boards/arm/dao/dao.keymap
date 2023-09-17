@@ -12,7 +12,7 @@
 #define CON 1
 #define QWR 2
 #define QWN 3
-#define LWR 4
+#define NUM 4
 #define RSE 5
 #define ADJ 6
 
@@ -47,7 +47,7 @@
           &none     &kp Q         &kp W         &kp F         &kp P             &kp B         &kp J         &kp L            &kp U         &kp Y        &kp SQT       &none       
           &none     &mt LGUI A    &mt LALT R    &mt LSHFT S   &mt LCTRL T       &kp G         &kp M         &mt RCTRL N      &mt RSHFT E   &mt RALT I   &mt RGUI O    &none
           &none     &kp Z         &kp X         &kp C         &kp D             &kp V         &kp K         &kp H            &kp COMMA     &kp DOT      &kp FSLH      &none
-                                            &mo ADJ   &lt CON BSPC   &lt CON RET   &lt CON TAB   &lt RSE SPACE   &mo ADJ
+                                            &mo ADJ   &lt CON BSPC   &lt CON RET   &lt CON TAB   &lt NUM SPACE   &mo ADJ
                         >;
                 };
                 colemak_nav_layer {
@@ -63,7 +63,7 @@
           &none     &kp Q         &kp W         &kp E         &kp R             &kp T         &kp Y         &kp U            &kp I         &kp O        &kp P         &none       
           &none     &mt LGUI A    &mt LALT S    &mt LSHFT D   &mt LCTRL F       &kp G         &kp H         &mt RCTRL J      &mt RSHFT K   &mt RALT L   &mt RGUI SEMI &kp SQT
           &none     &kp Z         &kp X         &kp C         &kp V             &kp B         &kp N         &kp M            &kp COMMA     &kp DOT      &kp FSLH      &none
-                                            &mo ADJ   &lt QWN BSPC   &lt CON RET   &lt QWN TAB   &lt RSE SPACE   &mo ADJ
+                                            &mo ADJ   &lt QWN BSPC   &lt CON RET   &lt QWN TAB   &lt NUM SPACE   &mo ADJ
                         >;
                 };
                 qwerty_nav_layer {
@@ -74,12 +74,12 @@
                                             &none     &none          &none         &kp TAB       &kp SPACE       &none
                         >;
                 };
-                lower_layer {
+                number_layer {
                         bindings = <
-          &mt LGUI F1      &kp F2     &kp F3   &kp F4        &kp F5     &kp F6      &kp F7      &kp F8     &kp F9        &kp F10    &kp F11    &kp F12           
-          &mt LCTRL PLUS   &kp EXCL   &kp AT   &kp HASH      &kp DLLR   &kp PRCNT   &kp CARET   &kp AMPS   &kp STAR      &kp LPAR   &kp RPAR   &mt RCTRL MINUS
-          &mt LALT EQUAL   &kp N1     &kp N2   &kp N3        &kp N4     &kp N5      &kp N6      &kp N7     &kp N8        &kp N9     &kp N0     &kp RALT
-                                               &lt ADJ TAB   &trans     &trans      &trans      &trans     &lt ADJ DEL
+          &none     &kp LBKT      &kp N7        &kp N8        &kp N9            &kp RBKT      &none         &none             &none         &none      &kp ESC        &none           
+          &none     &kp SEMI      &kp N4        &kp N5        &kp N6            &kp EQUAL     &none         &kp RCTRL         &kp RSHFT     &kp RALT   &kp RGUI       &none
+          &none     &kp GRAVE     &kp N1        &kp N2        &kp N3            &kp BSLH      &none         &none             &none         &none      &none          &none
+                                            &none      &kp N0         &kp MINUS    &none         &none          &none
                         >;
                 };
 
