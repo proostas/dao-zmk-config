@@ -39,6 +39,19 @@
 
         };
 
+        macros {
+            ZMK_MACRO(to_russian,
+                wait-ms = <20>;
+                tap-ms = <20>;
+                bindings = <&macro_tap &kp LC(LA(N2))>, <&macro_tap &tog QWR>;
+            )
+            ZMK_MACRO(to_english,
+                wait-ms = <20>;
+                tap-ms = <20>;
+                bindings = <&macro_tap &kp LC(LA(N1))>, <&macro_tap &tog QWR>;
+            )
+        };
+
         keymap {
                 compatible = "zmk,keymap";
 
@@ -52,7 +65,7 @@
                 };
                 colemak_nav_layer {
                         bindings = <
-          &none     &kp ESC       &kp CAPS      &tog QWR      &tog QWR          &none         &kp PG_UP     &kp HOME         &kp UP        &kp END      &kp INS       &none
+          &none     &kp ESC       &kp CAPS      &to_russian      &tog QWR          &none         &kp PG_UP     &kp HOME         &kp UP        &kp END      &kp INS       &none
           &none     &kp LGUI      &kp LALT      &kp LSHFT     &kp LCTRL         &none         &kp PG_DN     &kp LEFT         &kp DOWN      &kp RIGHT    &kp DEL       &none
           &none     &none         &none         &none         &none             &none         &none         &none            &kp K_CMENU   &none        &none         &none
                                             &none     &none          &none         &kp TAB       &kp SPACE       &none
@@ -68,7 +81,7 @@
                 };
                 qwerty_nav_layer {
                         bindings = <
-          &none     &kp ESC       &kp CAPS      &tog QWR      &tog QWR          &none         &kp PG_UP     &kp HOME         &kp UP        &kp END      &kp INS       &none
+          &none     &kp ESC       &kp CAPS      &to_english      &tog QWR          &none         &kp PG_UP     &kp HOME         &kp UP        &kp END      &kp INS       &none
           &none     &kp LGUI      &kp LALT      &kp LSHFT     &kp LCTRL         &none         &kp PG_DN     &kp LEFT         &kp DOWN      &kp RIGHT    &kp DEL       &none
           &none     &none         &none         &none         &none             &none         &none         &none            &kp K_CMENU   &none        &none         &none
                                             &none     &none          &none         &kp TAB       &kp SPACE       &none
