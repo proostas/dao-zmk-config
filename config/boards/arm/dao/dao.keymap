@@ -133,11 +133,19 @@
                 bindings = <&kp RPAR>, <&kp COLON>;
                 mods = <(MOD_LSFT)>;
             };
+            dikm: diktor_m {
+                compatible = "zmk,behavior-mod-morph";
+                label = "DIKTOR_COL_MODS_FOR_M";
+                #binding-cells = <0>;
+                bindings = <&kp M>, <&kp W>;
+                mods = <(MOD_RCTL|MOD_RALT|MOD_RGUI)>;
+                keep-mods = <(MOD_RCTL|MOD_RALT|MOD_RGUI)>;
+            };
             dsoft: diktor_soft {
                 compatible = "zmk,behavior-mod-morph";
                 label = "DIKTOR_SOFT_HARD_SIGN";
                 #binding-cells = <0>;
-                bindings = <&kp M>, <&kp RBKT>;
+                bindings = <&dikm>, <&kp RBKT>;
                 mods = <(MOD_RSFT)>;
             };
             dbsoft: diktor_big_soft {
