@@ -23,15 +23,34 @@
 #define MED 6
 #define MOS 7
 
+#define U_TAPPING_TERM 200
+#define U_QUICK_TAP 0
+
+#define LEFT_HAND_KEYS   \
+     0  1  2  3  4  5    \
+    12 13 14 15 16 17    \
+    24 25 26 27 28 29
+
+#define RIGHT_HAND_KEYS  \
+                          6  7  8  9 10 11 \
+                         18 19 20 21 22 23 \
+                         30 31 32 33 34 35
+
+#define LEFT_THUMB_KEYS  \
+             36 37 38 
+
+#define RIGHT_THUMB_KEYS \
+                         39 40 41
+
 &lt { 
     flavor = "balanced";
-    tapping-term-ms = <200>;
-    quick-tap-ms = <150>; 
+    tapping-term-ms = <U_TAPPING_TERM>;
+    quick-tap-ms = <U_QUICK_TAP>; 
 };
 &mt { 
     flavor = "balanced";
-    tapping-term-ms = <200>;
-    quick-tap-ms = <150>; 
+    tapping-term-ms = <U_TAPPING_TERM>;
+    quick-tap-ms = <U_QUICK_TAP>; 
 };
 
 &mmv {
@@ -56,6 +75,27 @@
 
 / {
         behaviors {
+            lmt: left_mod_tap {
+                compatible = "zmk,behavior-hold-tap";
+                flavor = "balanced";
+                hold-trigger-key-positions = <RIGHT_HAND_KEYS RIGHT_THUMB_KEYS>;
+                hold-trigger-on-release; // for combining HRMs
+                tapping-term-ms = <U_TAPPING_TERM>;
+                quick-tap-ms = <U_QUICK_TAP>;
+                #binding-cells = <2>;
+                bindings = <&kp>, <&kp>;
+            };
+            rmt: right_mod_tap {
+                compatible = "zmk,behavior-hold-tap";
+                flavor = "balanced";
+                hold-trigger-key-positions = <LEFT_HAND_KEYS LEFT_THUMB_KEYS>;
+                hold-trigger-on-release; // for combining HRMs
+                tapping-term-ms = <U_TAPPING_TERM>;
+                quick-tap-ms = <U_QUICK_TAP>;
+                #binding-cells = <2>;
+                bindings = <&kp>, <&kp>;
+            };
+            
             collp: colemak_lpar {
                 compatible = "zmk,behavior-mod-morph";
                 label = "COLEMAK_LEFT_PARENTHESIS";
@@ -110,10 +150,13 @@
             mtdb: mod_tap_dikb {
                 compatible = "zmk,behavior-hold-tap";
                 label = "MOD_TAP_DIKTOR_B";
+                flavor = "balanced";
+                hold-trigger-key-positions = <RIGHT_HAND_KEYS RIGHT_THUMB_KEYS>;
+                hold-trigger-on-release; // for combining HRMs
+                tapping-term-ms = <U_TAPPING_TERM>;
+                quick-tap-ms = <U_QUICK_TAP>;
                 #binding-cells = <2>;
                 bindings = <&kp>, <&dikb>;
-                flavor = "balanced";
-                tapping-term-ms = <200>;
             };
             // Ctrl-<Е> to Ctrl-S
             dikt: diktor_t {
@@ -127,10 +170,13 @@
             mtdt: mod_tap_dikt {
                 compatible = "zmk,behavior-hold-tap";
                 label = "MOD_TAP_DIKTOR_T";
+                flavor = "balanced";
+                hold-trigger-key-positions = <RIGHT_HAND_KEYS RIGHT_THUMB_KEYS>;
+                hold-trigger-on-release; // for combining HRMs
+                tapping-term-ms = <U_TAPPING_TERM>;
+                quick-tap-ms = <U_QUICK_TAP>;
                 #binding-cells = <2>;
                 bindings = <&kp>, <&dikt>;
-                flavor = "balanced";
-                tapping-term-ms = <200>;
             };
             // Ctrl-<Э> to Ctrl-X
             dikapos: diktor_apos {
@@ -223,7 +269,7 @@
 //                         ╰───────┴───────┴───────╯     ╰───────┴───────┴───────╯
                         bindings = <
           &kp LBKT  &kp Q         &kp W         &kp F         &kp P             &kp B         &kp J         &kp L            &kp U         &kp Y        &kp SQT       &kp RBKT       
-          &collp    &mt LGUI A    &mt LALT R    &mt LSHFT S   &mt LCTRL T       &kp G         &kp M         &mt RCTRL N      &mt RSHFT E   &mt RALT I   &mt RGUI O    &colrp
+          &collp    &lmt LGUI A   &lmt LALT R   &lmt LSHFT S  &lmt LCTRL T      &kp G         &kp M         &rmt RCTRL N     &rmt RSHFT E  &rmt RALT I  &rmt RGUI O   &colrp
           &kp GRAVE &kp Z         &kp X         &kp C         &kp D             &kp V         &kp K         &kp H            &kp COMMA     &kp DOT      &kp FSLH      &kp BSLH
                                             &mo MED   &lt ENN BSPC   &lt MOS RET   &lt FUN TAB   &lt NUM SPACE   &mo MED
                         >;
@@ -253,7 +299,7 @@
 //                         ╰───────┴───────┴───────╯     ╰───────┴───────┴───────╯
                         bindings = <
           &kp GRAVE &kp W         &dsoft        &dikz         &dcomma           &ddot         &kp P         &kp D            &kp R         &kp L        &kp X         &kp I       
-          &dbsoft   &mt LGUI E    &mtdb LALT B  &mtdt LSHFT T &mt LCTRL J       &kp F         &kp K         &mt RCTRL Y      &mt RSHFT N   &mt RALT C   &mt RGUI H    &kp Q
+          &dbsoft   &lmt LGUI E   &mtdb LALT B  &mtdt LSHFT T &lmt LCTRL J      &kp F         &kp K         &rmt RCTRL Y     &rmt RSHFT N  &rmt RALT C  &rmt RGUI H   &kp Q
           &kp BSLH  &dika         &dikapos      &diklbkt      &kp S             &dikdot       &kp COMMA     &kp V            &kp G         &kp U        &kp SEMI      &kp O
                                             &mo MED   &lt RUN BSPC   &lt MOS RET   &lt FUN TAB   &lt NUM SPACE   &mo MED
                         >;
