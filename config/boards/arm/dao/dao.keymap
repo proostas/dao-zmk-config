@@ -7,6 +7,7 @@
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/keys.h>
 #include <dt-bindings/zmk/bt.h>
+#include <dt-bindings/zmk/outputs.h>
 
 #define ZMK_MOUSE_DEFAULT_MOVE_VAL 800  // 600
 #define ZMK_MOUSE_DEFAULT_SCRL_VAL 20   // 10
@@ -305,14 +306,14 @@
                 };
                 media_layer {
 // ╭───────┬───────┬───────┬───────┬───────┬───────╮     ╭───────┬───────┬───────┬───────┬───────┬───────╮
-// | BOOTL |       |       |       |       |       |     | STOP  |  P/P  | VOL+  |       |       | BOOTL |
+// | BOOTL |       |       |  OUT  |  BLE  |  USB  |     | STOP  |  P/P  | VOL+  |       |       | BOOTL |
 // | BTCLR |  BT0  |  BT1  |  BT2  |  BT3  |  BT4  |     |       |   <<  | VOL-  |  >>   |       |       |
 // | RESET |       |       |       |       |       |     |       |       | MUTE  |       |       | RESET |
 // ╰───────┴───────┴───────┼───────┼───────┼───────┤     ├───────┼───────┼───────┼───────────────────────╯
 //                         |       |       |       |     |       |       |       |
 //                         ╰───────┴───────┴───────╯     ╰───────┴───────┴───────╯
                         bindings = <
-          &bootloader   &none          &none          &none          &none          &none          &kp C_STOP     &kp C_PP       &kp C_VOL_UP   &none          &none          &bootloader
+          &bootloader   &none          &none          &out OUT_TOG   &out OUT_BLE   &out OUT_USB   &kp C_STOP     &kp C_PP       &kp C_VOL_UP   &none          &none          &bootloader
           &bt BT_CLR    &bt BT_SEL 0   &bt BT_SEL 1   &bt BT_SEL 2   &bt BT_SEL 3   &bt BT_SEL 4   &none          &kp C_PREV     &kp C_VOL_DN   &kp C_NEXT     &none          &none
           &sys_reset    &none          &none          &none          &none          &none          &none          &none          &kp C_MUTE     &none          &none          &sys_reset
                                              &none         &none          &none         &none          &none         &none
