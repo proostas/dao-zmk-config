@@ -24,8 +24,8 @@
 #define MED 7
 #define MOS 8
 
-#define U_TO_RUS_SCUT LC(LA(N2))
-#define U_TO_ENG_SCUT LC(LA(N1))
+#define U_TO_RUS_SCUT LC(LS(N2))
+#define U_TO_ENG_SCUT LC(LS(N1))
 
 #define U_TAPPING_TERM 200
 #define U_QUICK_TAP 0
@@ -69,6 +69,10 @@
     time-to-max-speed-ms = <40>;  // 300
     delay-ms = <0>;
     trigger-period-ms = <8>;      // 16
+};
+
+&caps_word {
+    continue-list = <UNDERSCORE RS(MINUS) BACKSPACE DELETE>;
 };
 
 / {
@@ -259,6 +263,35 @@
                 mods = <(MOD_RALT|MOD_RCTL)>;
                 keep-mods = <(MOD_RALT|MOD_RCTL)>;
             };
+            // -- English Number layer --
+            numabr: numeric_angle_brackets {
+                compatible = "zmk,behavior-mod-morph";
+                label = "NUMERIC_ANGLE_BRACKETS";
+                #binding-cells = <0>;
+                bindings = <&kp LESS_THAN>, <&kp GREATER_THAN>;
+                mods = <(MOD_RSFT)>;
+            };
+            num7: numeric_7 {
+                compatible = "zmk,behavior-mod-morph";
+                label = "NUMERIC_7";
+                #binding-cells = <0>;
+                bindings = <&kp N7>, <&kp LPAR>;
+                mods = <(MOD_RSFT)>;
+            };
+            num9: numeric_9 {
+                compatible = "zmk,behavior-mod-morph";
+                label = "NUMERIC_9";
+                #binding-cells = <0>;
+                bindings = <&kp N9>, <&kp RPAR>;
+                mods = <(MOD_RSFT)>;
+            };
+            num0: numeric_0 {
+                compatible = "zmk,behavior-mod-morph";
+                label = "NUMERIC_0";
+                #binding-cells = <0>;
+                bindings = <&kp N0>, <&kp AMPERSAND>;
+                mods = <(MOD_RSFT)>;
+            };
             // Numeric . or ,
             numdorc: numeric_dot_or_comma {
                 compatible = "zmk,behavior-mod-morph";
@@ -342,7 +375,21 @@
                 compatible = "zmk,behavior-mod-morph";
                 label = "RUS_NUMERIC_7";
                 #binding-cells = <0>;
-                bindings = <&kp N7>, <&engkp AMPERSAND>;
+                bindings = <&kp N7>, <&kp LPAR>;
+                mods = <(MOD_RSFT)>;
+            };
+            rnum9: russian_numeric_9 {
+                compatible = "zmk,behavior-mod-morph";
+                label = "RUS_NUMERIC_9";
+                #binding-cells = <0>;
+                bindings = <&kp N9>, <&kp RPAR>;
+                mods = <(MOD_RSFT)>;
+            };
+            rnum0: russian_numeric_0 {
+                compatible = "zmk,behavior-mod-morph";
+                label = "RUS_NUMERIC_0";
+                #binding-cells = <0>;
+                bindings = <&kp N0>, <&engkp AMPERSAND>;
                 mods = <(MOD_RSFT)>;
             };
         };
@@ -369,19 +416,34 @@
                     , <&macro_tap &kp MACRO_PLACEHOLDER>
                     , <&macro_tap &kp U_TO_RUS_SCUT>
                     ;
+                
             };
         };
         
         combos {
             compatible = "zmk,combos";
-            combo_rus {
+            combo_force_rus {
+                timeout-ms = <50>;
+                key-positions = <5 6>;
+                layers = <RUS>;
+                bindings = <&kp U_TO_RUS_SCUT>;
+                require-prior-idle-ms = <300>;
+            };
+            combo_force_eng {
+                timeout-ms = <50>;
+                key-positions = <5 6>;
+                layers = <ENG>;
+                bindings = <&kp U_TO_ENG_SCUT>;
+                require-prior-idle-ms = <300>;
+            };
+            combo_switch_to_rus {
                 timeout-ms = <50>;
                 key-positions = <38 39>;
                 layers = <ENG>;
                 bindings = <&to_russian>;
                 require-prior-idle-ms = <300>;
             };
-            combo_eng {
+            combo_switch_to_eng {
                 timeout-ms = <50>;
                 key-positions = <38 39>;
                 layers = <RUS>;
@@ -405,7 +467,7 @@
           &kp LBKT  &kp Q         &kp W         &kp F         &kp P             &kp B         &kp J         &kp L            &kp U         &kp Y        &kp SQT       &kp RBKT       
           &collp    &lmt LGUI A   &lmt LALT R   &lsht LSHFT S &lmt LCTRL T      &kp G         &kp M         &rmt RCTRL N     &rsht RSHFT E &rmt RALT I  &rmt RGUI O   &colrp
           &kp GRAVE &kp Z         &kp X         &kp C         &kp D             &kp V         &kp K         &kp H            &kp COMMA     &kp DOT      &kp FSLH      &kp BSLH
-                                            &mo MED   &lt ENN BSPC   &lt MOS RET   &lt FUN TAB   &lt NUE SPACE   &mo MED
+                                            &mo MED   &lt ENN BSPC   &lt MOS RET   &lt FUN TAB   &lt NUE SPACE  &mo MED
                         >;
                 };
                 english_nav_layer {
@@ -425,17 +487,17 @@
                 };
                 english_number_layer {
 // ╭───────┬───────┬───────┬───────┬───────┬───────╮     ╭───────┬───────┬───────┬───────┬───────┬───────╮
-// |       |   [   |   7   |   8   |   9   |   ]   |     |       |       |       |       |  ESC  |       |
+// |  </>  |   [   |  7/(  |   8   |  9/)  |   ]   |     |       |       | SPACE |       |  ESC  |       |
 // |       |   ;   |   4   |   5   |   6   |   =   |     |  BKSP | RCTRL | RSHFT |  RALT |  RGUI |       |
 // |       |   `   |   1   |   2   |   3   |   \   |     |       |       |       |       |       |       |
 // ╰───────┴───────┴───────┼───────┼───────┼───────┤     ├───────┼───────┼───────┼───────────────────────╯
-//                         |  ./,  |   0   |   -   |     |       |       |       |
+//                         |  ./,  |  0/&  |   -   |     |       |       |       |
 //                         ╰───────┴───────┴───────╯     ╰───────┴───────┴───────╯
                         bindings = <
-          &none     &kp LBKT      &kp N7        &kp N8        &kp N9            &kp RBKT      &none         &none             &none         &none      &kp ESC        &none           
+          &numabr   &kp LBKT      &num7         &kp N8        &num9             &kp RBKT      &none         &none             &kp SPACE     &none      &kp ESC        &none           
           &none     &kp SEMI      &kp N4        &kp N5        &kp N6            &kp EQUAL     &kp BSPC      &kp RCTRL         &kp RSHFT     &kp RALT   &kp RGUI       &none
           &none     &kp GRAVE     &kp N1        &kp N2        &kp N3            &kp BSLH      &none         &none             &none         &none      &none          &none
-                                            &numdorc  &kp N0         &kp MINUS    &none         &none           &none
+                                            &numdorc  &num0           &kp MINUS    &none         &none           &none
                         >;
                 };
                 russian_layer {
@@ -470,30 +532,30 @@
                 };
                 russian_number_layer {
 // ╭───────┬───────┬───────┬───────┬───────┬───────╮     ╭───────┬───────┬───────┬───────┬───────┬───────╮
-// |  </>  |  [/{  |  7/&  |   8   |   9   |  ]/}  |     |       |       |       |       |  ESC  |       |
+// |  </>  |  [/{  |  7/(  |   8   |  9/)  |  ]/}  |     |       |       | SPACE |       |  ESC  |       |
 // |  @/#  |  ;/:  |  4/$  |   5   |  6/^  |   =   |     |  BKSP | RCTRL | RSHFT |  RALT |  RGUI |       |
 // |       |  `/~  |  1/'  |   2   |   3   |   \   |     |       |       |       |       |       |       |
 // ╰───────┴───────┴───────┼───────┼───────┼───────┤     ├───────┼───────┼───────┼───────────────────────╯
-//                         |  ./,  |   0   |   -   |     |       |       |       |
+//                         |  ./,  |  0/&  |   -   |     |       |       |       |
 //                         ╰───────┴───────┴───────╯     ╰───────┴───────┴───────╯
                         bindings = <
-          &rnumabr  &rnumlbr      &rnum7        &kp N8        &kp N9            &rnumrbr      &none         &none             &none         &none      &kp ESC        &none
+          &rnumabr  &rnumlbr      &rnum7        &kp N8        &rnum9            &rnumrbr      &none         &none             &kp SPACE     &none      &kp ESC        &none
           &rnumat   &rnumscol     &rnum4        &kp N5        &rnum6            &kp EQUAL     &kp BSPC      &kp RCTRL         &kp RSHFT     &kp RALT   &kp RGUI       &none
           &none     &rnumgrv      &rnum1        &kp N2        &kp N3            &kp BSLH      &none         &none             &none         &none      &none          &none
-                                            &rnumdorc &kp N0         &kp MINUS    &none         &none           &none
+                                            &rnumdorc &rnum0          &kp MINUS    &none         &none           &none
                         >;
                 };
 
                 function_layer {
 // ╭───────┬───────┬───────┬───────┬───────┬───────╮     ╭───────┬───────┬───────┬───────┬───────┬───────╮
-// |       |  F12  |  F7   |  F8   |  F9   | PSCRN |     |       |       |       |       |  ESC  |       |
+// |       |  F12  |  F7   |  F8   |  F9   | PSCRN |     |       |       | CWORD |       |  ESC  |       |
 // |       |  F11  |  F4   |  F5   |  F6   | SLCK  |     |       | RCTRL | RSHFT |  RALT |  RGUI |       |
 // |       |  F10  |  F1   |  F2   |  F3   | PAUSE |     |       |       |       |       |       |       |
 // ╰───────┴───────┴───────┼───────┼───────┼───────┤     ├───────┼───────┼───────┼───────────────────────╯
 //                         |       |  BKSP |  RET  |     |       |       |       |
 //                         ╰───────┴───────┴───────╯     ╰───────┴───────┴───────╯
                         bindings = <
-          &none     &kp F12       &kp F7        &kp F8        &kp F9            &kp PSCRN       &none       &none             &none         &none       &kp ESC        &none   
+          &none     &kp F12       &kp F7        &kp F8        &kp F9            &kp PSCRN       &none       &none             &caps_word    &none       &kp ESC        &none   
           &none     &kp F11       &kp F4        &kp F5        &kp F6            &kp SLCK        &none       &kp RCTRL         &kp RSHFT     &kp RALT    &kp RGUI       &none
           &none     &kp F10       &kp F1        &kp F2        &kp F3            &kp PAUSE_BREAK &none       &none             &none         &none       &none          &none
                                             &none      &kp BSPC      &kp RET      &none         &none           &none
@@ -505,29 +567,30 @@
 // | BTCLR |  BT0  |  BT1  |  BT2  |  BT3  |  BT4  |     |       |   <<  | VOL-  |  >>   |       |       |
 // | RESET |  DC0  |  DC1  |  DC2  |  DC3  |  DC4  |     |       |       | MUTE  |       |       | RESET |
 // ╰───────┴───────┴───────┼───────┼───────┼───────┤     ├───────┼───────┼───────┼───────────────────────╯
-//                         |       |       |       |     |       |       |       |
+//                         |       |       |       |     |       | KRPT  |       |
 //                         ╰───────┴───────┴───────╯     ╰───────┴───────┴───────╯
                         bindings = <
           &bootloader   &none          &none          &out OUT_TOG   &out OUT_BLE   &out OUT_USB   &kp C_STOP     &kp C_PP       &kp C_VOL_UP   &none          &none          &bootloader
           &bt BT_CLR    &bt BT_SEL 0   &bt BT_SEL 1   &bt BT_SEL 2   &bt BT_SEL 3   &bt BT_SEL 4   &none          &kp C_PREV     &kp C_VOL_DN   &kp C_NEXT     &none          &none
           &sys_reset    &bt BT_DISC 0  &bt BT_DISC 1  &bt BT_DISC 2  &bt BT_DISC 3  &bt BT_DISC 4  &none          &none          &kp C_MUTE     &none          &none          &sys_reset
-                                             &none         &none          &none         &none          &none         &none
+                                             &none         &none          &none         &none          &key_repeat   &none
                         >;
                 };
                 mouse_layer {
 // ╭───────┬───────┬───────┬───────┬───────┬───────╮     ╭───────┬───────┬───────┬───────┬───────┬───────╮
 // |       |  ESC  |       |       |       |       |     | SC_UP | SC_LT | MV_UP | SC_RT |       |       |
 // |       |  LGUI |  LALT | LSHFT | LCTRL |       |     | SC_DN | MV_LT | MV_DN | MV_RT |       |       |
-// |       |       |       |       |       |       |     |       |       |       |       |       |       |
+// |       |       |       |       |       |       |     |       |  MB4  |  MB5  |       |       |       |
 // ╰───────┴───────┴───────┼───────┼───────┼───────┤     ├───────┼───────┼───────┼───────────────────────╯
-//                         |       |       |       |     |  RCLK |  LCLK |       |
+//                         |       |       |       |     |  RCLK |  LCLK |  MCLK |
 //                         ╰───────┴───────┴───────╯     ╰───────┴───────┴───────╯
                         bindings = <
           &none         &kp ESC        &none          &none          &none          &none          &msc SCRL_UP     &msc SCRL_LEFT   &mmv MOVE_UP   &msc SCRL_RIGHT   &none          &none
           &none         &kp LGUI       &kp LALT       &kp LSHFT      &kp LCTRL      &none          &msc SCRL_DOWN   &mmv MOVE_LEFT   &mmv MOVE_DOWN &mmv MOVE_RIGHT   &none          &none
-          &none         &none          &none          &none          &none          &none          &none            &none            &none          &none             &none          &none
-                                             &none         &none          &none         &mkp RCLK      &mkp LCLK     &none
+          &none         &none          &none          &none          &none          &none          &none            &mkp MB4         &mkp MB5       &none             &none          &none
+                                             &none         &none          &none         &mkp RCLK      &mkp LCLK     &mkp MCLK
                         >;
                 };
         };
 };
+
