@@ -1,9 +1,3 @@
-/*
- * Copyright (c) 2021 Rafael Yumagulov
- *
- * SPDX-License-Identifier: MIT
- */
-
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/keys.h>
 #include <dt-bindings/zmk/bt.h>
@@ -22,8 +16,12 @@
 #define RUN 4
 #define NUR 5
 #define FUN 6
-#define MED 7
-#define MOS 8
+#define FN2 7
+#define MED 8
+#define MOS 9
+#define FMO 10
+#define SMO 11
+#define BTN 12
 
 #define U_TO_RUS_SCUT LC(LS(N2))
 #define U_TO_ENG_SCUT LC(LS(N1))
@@ -183,8 +181,14 @@
                 mods = <(MOD_RSFT)>;
             };
             
-            
             // Russian layer
+            ru_caps_word: russian_caps_word {
+                // behavior-caps-word is useless for Russian as it doesn't shift chars outside of a-z
+                // loking forward to PR#2043's &capslock_word
+                compatible = "zmk,behavior-caps-word";
+                #binding-cells = <0>;
+                continue-list = <UNDERSCORE RS(MINUS) BACKSPACE DELETE GRAVE LBKT RBKT APOS DOT COMMA SEMI>;
+            };
             //  Ц >> Q
             dikw: diktor_w {
                 compatible = "zmk,behavior-mod-morph";
@@ -636,18 +640,74 @@
                 bindings = <&kp N0>, <&engkp AMPERSAND>;
                 mods = <(MOD_RSFT)>;
             };
+            
+            // Mouse 
+            //  acceleration
+            fmmv: fast_mouse_move {
+                compatible = "zmk,behavior-input-two-axis";
+                #binding-cells = <1>;
+                x-input-code = <INPUT_REL_X>;
+                y-input-code = <INPUT_REL_Y>;
+                acceleration-exponent = <1>;  // 1
+                time-to-max-speed-ms = <300>; // 300
+                delay-ms = <0>;
+                trigger-period-ms = <8>;      // 16
+            };
+            fmsc: fast_mouse_scroll {
+                compatible = "zmk,behavior-input-two-axis";
+                #binding-cells = <1>;
+                x-input-code = <INPUT_REL_HWHEEL>;
+                y-input-code = <INPUT_REL_WHEEL>;
+                acceleration-exponent = <1>;  // 0
+                time-to-max-speed-ms = <40>;  // 300
+                delay-ms = <0>;
+                trigger-period-ms = <8>;      // 16
+            };
+            //  deceleration
+            smmv: slow_mouse_move {
+                compatible = "zmk,behavior-input-two-axis";
+                #binding-cells = <1>;
+                x-input-code = <INPUT_REL_X>;
+                y-input-code = <INPUT_REL_Y>;
+                acceleration-exponent = <1>;  // 1
+                time-to-max-speed-ms = <300>; // 300
+                delay-ms = <0>;
+                trigger-period-ms = <8>;      // 16
+            };
+        };
+        
+        // Mouse 
+        //  acceleration
+        fmmv_input_listener: fmmv_input_listener {
+            compatible = "zmk,input-listener";
+            device = <&fmmv>;
+            scale-multiplier = <2>;
+            scale-divisor = <1>;
+        };
+        fmsc_input_listener: fmsc_input_listener {
+            compatible = "zmk,input-listener";
+            device = <&fmsc>;
+            scale-multiplier = <2>;
+            scale-divisor = <1>;
+        };
+        //  deceleration
+        smmv_input_listener: smmv_input_listener {
+            compatible = "zmk,input-listener";
+            device = <&smmv>;
+            scale-multiplier = <1>;
+            scale-divisor = <2>;
         };
 
         macros {
             ZMK_MACRO(to_russian,
                 wait-ms = <20>;
                 tap-ms = <20>;
-                bindings = <&macro_tap &kp U_TO_RUS_SCUT>, <&macro_tap &tog RUS>;
+                bindings = <&kp U_TO_RUS_SCUT>, <&tog RUS>;
             )
             ZMK_MACRO(to_english,
                 wait-ms = <20>;
                 tap-ms = <20>;
-                bindings = <&macro_tap &kp U_TO_ENG_SCUT>, <&macro_tap &tog RUS>;
+                bindings = <&kp U_TO_ENG_SCUT>, <&tog RUS>;
             )
             engkp: english_kp {
                 compatible = "zmk,behavior-macro-one-param";
@@ -655,12 +715,21 @@
                 tap-ms = <20>;
                 #binding-cells = <1>;
                 bindings 
-                    = <&macro_tap &kp U_TO_ENG_SCUT>
+                    = <&kp U_TO_ENG_SCUT>
                     , <&macro_param_1to1>
-                    , <&macro_tap &kp MACRO_PLACEHOLDER>
-                    , <&macro_tap &kp U_TO_RUS_SCUT>
+                    , <&kp MACRO_PLACEHOLDER>
+                    , <&kp U_TO_RUS_SCUT>
                     ;
                 
+            };
+            btsel: bt_select {
+                compatible = "zmk,behavior-macro-one-param";
+                #binding-cells = <1>;
+                bindings 
+                    = <&out OUT_BLE>
+                    , <&macro_param_1to2>
+                    , <&bt BT_SEL MACRO_PLACEHOLDER>
+                    ;
             };
         };
         
@@ -717,15 +786,15 @@
                 english_nav_layer {
 // ╭───────┬───────┬───────┬───────┬───────┬───────╮     ╭───────┬───────┬───────┬───────┬───────┬───────╮
 // |       |  ESC  | CAPS  |  RUS  |       |       |     | PG_UP | HOME  |  UP   |  END  |  INS  |       |
-// |       |  LGUI | LALT  | LSHFT | LCTRL |       |     | PG_DN | LEFT  | DOWN  | RIGHT |  DEL  |       |
-// |       |       |       |       |       |       |     |       |       | MENU  |       |       |       |
+// |       |  LGUI | LALT  | LSHFT | LCTRL |  BTN  |     | PG_DN | LEFT  | DOWN  | RIGHT |  DEL  |       |
+// |       |       |       |       |       |       |     |       | CWORD | MENU  |       |       |       |
 // ╰───────┴───────┴───────┼───────┼───────┼───────┤     ├───────┼───────┼───────┼───────────────────────╯
-//                         |       |       |       |     |  TAB  | SPACE |       |
+//                         |       |  (0)  |       |     |  TAB  | SPACE |       |
 //                         ╰───────┴───────┴───────╯     ╰───────┴───────┴───────╯
                         bindings = <
           &none     &kp ESC       &kp CAPS      &to_russian   &tog RUS          &none         &kp PG_UP     &kp HOME         &kp UP        &kp END      &kp INS       &none
-          &none     &kp LGUI      &kp LALT      &kp LSHFT     &kp LCTRL         &none         &kp PG_DN     &kp LEFT         &kp DOWN      &kp RIGHT    &kp DEL       &none
-          &none     &none         &none         &none         &none             &none         &none         &none            &kp K_CMENU   &none        &none         &none
+          &none     &kp LGUI      &kp LALT      &kp LSHFT     &kp LCTRL         &tog BTN      &kp PG_DN     &kp LEFT         &kp DOWN      &kp RIGHT    &kp DEL       &none
+          &none     &none         &none         &none         &none             &none         &none         &caps_word       &kp K_CMENU   &none        &none         &none
                                             &none     &none          &none         &kp TAB       &kp SPACE       &none
                         >;
                 };
@@ -735,7 +804,7 @@
 // |       |   ;   |   4   |   5   |   6   |   =   |     |  BKSP | RCTRL | RSHFT |  RALT |  RGUI |       |
 // |       |   `   |   1   |   2   |   3   |   \   |     |       |       |       |       |       |       |
 // ╰───────┴───────┴───────┼───────┼───────┼───────┤     ├───────┼───────┼───────┼───────────────────────╯
-//                         |  ./,  |  0/&  |   -   |     |       |       |       |
+//                         |  ./,  |  0/&  |   -   |     |       |  (0)  |       |
 //                         ╰───────┴───────┴───────╯     ╰───────┴───────┴───────╯
                         bindings = <
           &numabr   &kp LBKT      &num7         &kp N8        &num9             &kp RBKT      &none         &none             &kp SPACE     &none      &kp ESC        &none           
@@ -762,15 +831,15 @@
                 russian_nav_layer {
 // ╭───────┬───────┬───────┬───────┬───────┬───────╮     ╭───────┬───────┬───────┬───────┬───────┬───────╮
 // |       |  ESC  | CAPS  |  ENG  |       |       |     | PG_UP | HOME  |  UP   |  END  |  INS  |       |
-// |       |  LGUI | LALT  | LSHFT | LCTRL |       |     | PG_DN | LEFT  | DOWN  | RIGHT |  DEL  |       |
-// |       |       |       |       |       |       |     |       |       | MENU  |       |       |       |
+// |       |  LGUI | LALT  | LSHFT | LCTRL |  BTN  |     | PG_DN | LEFT  | DOWN  | RIGHT |  DEL  |       |
+// |       |       |       |       |       |       |     |       | CWORD | MENU  |       |       |       |
 // ╰───────┴───────┴───────┼───────┼───────┼───────┤     ├───────┼───────┼───────┼───────────────────────╯
-//                         |       |       |       |     |  TAB  | SPACE |       |
+//                         |       |  (0)  |       |     |  TAB  | SPACE |       |
 //                         ╰───────┴───────┴───────╯     ╰───────┴───────┴───────╯
                         bindings = <
           &none     &kp ESC       &kp CAPS      &to_english   &tog RUS          &none         &kp PG_UP     &kp HOME         &kp UP        &kp END      &kp INS       &none
-          &none     &kp LGUI      &kp LALT      &kp LSHFT     &kp LCTRL         &none         &kp PG_DN     &kp LEFT         &kp DOWN      &kp RIGHT    &kp DEL       &none
-          &none     &none         &none         &none         &none             &none         &none         &none            &kp K_CMENU   &none        &none         &none
+          &none     &kp LGUI      &kp LALT      &kp LSHFT     &kp LCTRL         &tog BTN      &kp PG_DN     &kp LEFT         &kp DOWN      &kp RIGHT    &kp DEL       &none
+          &none     &none         &none         &none         &none             &none         &none         &ru_caps_word    &kp K_CMENU   &none        &none         &none
                                             &none     &none          &none         &kp TAB       &kp SPACE       &none
                         >;
                 };
@@ -780,7 +849,7 @@
 // |  @/#  |  ;/:  |  4/$  |   5   |  6/^  |   =   |     |  BKSP | RCTRL | RSHFT |  RALT |  RGUI |       |
 // |       |  `/~  |  1/'  |   2   |   3   |   \   |     |       |       |       |       |       |       |
 // ╰───────┴───────┴───────┼───────┼───────┼───────┤     ├───────┼───────┼───────┼───────────────────────╯
-//                         |  ./,  |  0/&  |   -   |     |       |       |       |
+//                         |  ./,  |  0/&  |   -   |     |       |  (0)  |       |
 //                         ╰───────┴───────┴───────╯     ╰───────┴───────┴───────╯
                         bindings = <
           &rnumabr  &rnumlbr      &rnum7        &kp N8        &rnum9            &rnumrbr      &none         &none             &kp SPACE     &none      &kp ESC        &none
@@ -792,49 +861,108 @@
 
                 function_layer {
 // ╭───────┬───────┬───────┬───────┬───────┬───────╮     ╭───────┬───────┬───────┬───────┬───────┬───────╮
-// |       |  F12  |  F7   |  F8   |  F9   | PSCRN |     |       |       | CWORD |       |  ESC  |       |
+// |       |  F12  |  F7   |  F8   |  F9   | PSCRN |     |       |       |  FN2  |       |  ESC  |       |
 // |       |  F11  |  F4   |  F5   |  F6   | SLCK  |     |       | RCTRL | RSHFT |  RALT |  RGUI |       |
 // |       |  F10  |  F1   |  F2   |  F3   | PAUSE |     |       |       |       |       |       |       |
 // ╰───────┴───────┴───────┼───────┼───────┼───────┤     ├───────┼───────┼───────┼───────────────────────╯
-//                         |       |  BKSP |  RET  |     |       |       |       |
+//                         |       |  BKSP |  RET  |     |  (0)  |       |       |
 //                         ╰───────┴───────┴───────╯     ╰───────┴───────┴───────╯
                         bindings = <
-          &none     &kp F12       &kp F7        &kp F8        &kp F9            &kp PSCRN       &none       &none             &caps_word    &none       &kp ESC        &none   
-          &none     &kp F11       &kp F4        &kp F5        &kp F6            &kp SLCK        &none       &kp RCTRL         &kp RSHFT     &kp RALT    &kp RGUI       &none
-          &none     &kp F10       &kp F1        &kp F2        &kp F3            &kp PAUSE_BREAK &none       &none             &none         &none       &none          &none
+          &kp F15   &kp F12       &kp F7        &kp F8        &kp F9            &kp PSCRN       &none       &none             &mo FN2       &none       &kp ESC        &none   
+          &kp F14   &kp F11       &kp F4        &kp F5        &kp F6            &kp SLCK        &none       &kp RCTRL         &kp RSHFT     &kp RALT    &kp RGUI       &none
+          &kp F13   &kp F10       &kp F1        &kp F2        &kp F3            &kp PAUSE_BREAK &none       &none             &none         &none       &none          &none
                                             &none      &kp BSPC      &kp RET      &none         &none           &none
+                        >;
+                };
+                function2_layer {
+// ╭───────┬───────┬───────┬───────┬───────┬───────╮     ╭───────┬───────┬───────┬───────┬───────┬───────╮
+// |       |  F24  |  F17  |  F18  |  F19  |       |     |       |       |  (1)  |       |       |       |
+// |       |  F23  |  F14  |  F15  |  F16  |       |     |       |       |       |       |       |       |
+// |       |  F20  |  F21  |  F22  |  F13  |       |     |       |       |       |       |       |       |
+// ╰───────┴───────┴───────┼───────┼───────┼───────┤     ├───────┼───────┼───────┼───────────────────────╯
+//                         |       |       |       |     |  (0)  |       |       |
+//                         ╰───────┴───────┴───────╯     ╰───────┴───────┴───────╯
+                        bindings = <
+          &trans    &kp F24       &kp F17       &kp F18       &kp F19           &trans          &trans      &trans            &trans        &trans       &trans        &trans   
+          &trans    &kp F23       &kp F14       &kp F15       &kp F16           &trans          &trans      &trans            &trans        &trans       &trans        &trans
+          &trans    &kp F20       &kp F21       &kp F22       &kp F13           &trans          &trans      &trans            &trans        &trans       &trans        &trans
+                                  &trans        &trans        &trans            &trans          &trans      &trans
                         >;
                 };
                 media_layer {
 // ╭───────┬───────┬───────┬───────┬───────┬───────╮     ╭───────┬───────┬───────┬───────┬───────┬───────╮
-// | BOOTL |       |       |  OUT  |  BLE  |  USB  |     | STOP  |  P/P  | VOL+  |       |       | BOOTL |
-// | BTCLR |  BT0  |  BT1  |  BT2  |  BT3  |  BT4  |     |       |   <<  | VOL-  |  >>   |       |       |
+// | BOOTL |  ALL  |       |  OUT  |  BLE  |  USB  |     | STOP  |  P/P  | VOL+  |       |       | BOOTL |
+// | BTCLR |  BT0  |  BT1  |  BT2  |  BT3  |  BT4  |     |       |   <<  | VOL-  |  >>   | LOCK  |       |
 // | RESET |  DC0  |  DC1  |  DC2  |  DC3  |  DC4  |     |       |       | MUTE  |       |       | RESET |
 // ╰───────┴───────┴───────┼───────┼───────┼───────┤     ├───────┼───────┼───────┼───────────────────────╯
-//                         |       |       |       |     |       | KRPT  |       |
+//                         |  (0)  |       |       |     |       | KRPT  |  (0)  |
 //                         ╰───────┴───────┴───────╯     ╰───────┴───────┴───────╯
                         bindings = <
-          &bootloader   &none          &none          &out OUT_TOG   &out OUT_BLE   &out OUT_USB   &kp C_STOP     &kp C_PP       &kp C_VOL_UP   &none          &none          &bootloader
-          &bt BT_CLR    &bt BT_SEL 0   &bt BT_SEL 1   &bt BT_SEL 2   &bt BT_SEL 3   &bt BT_SEL 4   &none          &kp C_PREV     &kp C_VOL_DN   &kp C_NEXT     &none          &none
-          &sys_reset    &bt BT_DISC 0  &bt BT_DISC 1  &bt BT_DISC 2  &bt BT_DISC 3  &bt BT_DISC 4  &none          &none          &kp C_MUTE     &none          &none          &sys_reset
+          &bootloader   &bt BT_CLR_ALL &none          &out OUT_TOG   &out OUT_BLE   &out OUT_USB   &kp C_STOP     &kp C_PP       &kp C_VOL_UP   &none          &none         &bootloader
+          &bt BT_CLR    &btsel 0       &btsel 1       &btsel 2       &btsel 3       &btsel 4       &none          &kp C_PREV     &kp C_VOL_DN   &kp C_NEXT     &kp C_AL_LOCK &none
+          &sys_reset    &bt BT_DISC 0  &bt BT_DISC 1  &bt BT_DISC 2  &bt BT_DISC 3  &bt BT_DISC 4  &none          &none          &kp C_MUTE     &none          &none         &sys_reset
                                              &none         &none          &none         &none          &key_repeat   &none
                         >;
                 };
                 mouse_layer {
 // ╭───────┬───────┬───────┬───────┬───────┬───────╮     ╭───────┬───────┬───────┬───────┬───────┬───────╮
-// |       |  ESC  |       | LC(X) | LC(C) |       |     | SC_UP | SC_LT | MV_UP | SC_RT |       |       |
-// |       |  LGUI | LALT  | LSHFT | LCTRL | LC(V) |     | SC_DN | MV_LT | MV_DN | MV_RT |  DEL  |       |
-// |       |       |       |       |       |       |     |       |  MB4  |  MB5  |       |       |       |
+// | REDO1 |  ESC  |  CUT  | COPY  | PASTE | UNDO  |     | SC_UP | SC_LT | MV_UP | SC_RT |  ALL  |       |
+// | REDO2 |  LGUI |  LALT | LSHFT | LCTRL | FAST  |     | SC_DN | MV_LT | MV_DN | MV_RT |  DEL  |       |
+// |       |       |       |       |       | SLOW  |     |       |  MB4  |  MB5  |       |       |       |
 // ╰───────┴───────┴───────┼───────┼───────┼───────┤     ├───────┼───────┼───────┼───────────────────────╯
-//                         |       |       |       |     |  RCLK |  LCLK |  MCLK |
+//                         |       |       |  (0)  |     |  RCLK |  LCLK |  MCLK |
 //                         ╰───────┴───────┴───────╯     ╰───────┴───────┴───────╯
                         bindings = <
-          &none         &kp ESC        &none          &kp LC(X)      &kp LC(C)      &none          &msc SCRL_UP     &msc SCRL_LEFT   &mmv MOVE_UP   &msc SCRL_RIGHT   &none          &none
-          &none         &kp LGUI       &kp LALT       &kp LSHFT      &kp LCTRL      &kp LC(V)      &msc SCRL_DOWN   &mmv MOVE_LEFT   &mmv MOVE_DOWN &mmv MOVE_RIGHT   &kp DEL        &none
-          &none         &none          &none          &none          &none          &none          &none            &mkp MB4         &mkp MB5       &none             &none          &none
+          &kp LC(Y)     &kp ESC        &kp LC(X)      &kp LC(C)      &kp LC(V)      &kp LC(Z)      &msc SCRL_UP     &msc SCRL_LEFT   &mmv MOVE_UP   &msc SCRL_RIGHT   &kp LC(A)      &none
+          &kp LC(LS(Z)) &kp LGUI       &kp LALT       &kp LSHFT      &kp LCTRL      &mo FMO        &msc SCRL_DOWN   &mmv MOVE_LEFT   &mmv MOVE_DOWN &mmv MOVE_RIGHT   &kp DEL        &none
+          &none         &none          &none          &none          &none          &mo SMO        &none            &mkp MB4         &mkp MB5       &none             &none          &none
                                              &none         &none          &none         &mkp RCLK      &mkp LCLK     &mkp MCLK
+                        >;
+                };
+                fast_mouse_layer {
+// ╭───────┬───────┬───────┬───────┬───────┬───────╮     ╭───────┬───────┬───────┬───────┬───────┬───────╮
+// |       |       |       |       |       |       |     | SC_UP | SC_LT | MV_UP | SC_RT |       |       | x 2
+// |       |       |       |       |       |  (1)  |     | SC_DN | MV_LT | MV_DN | MV_RT |       |       | x 2
+// |       |       |       |       |       |       |     |       |       |       |       |       |       |
+// ╰───────┴───────┴───────┼───────┼───────┼───────┤     ├───────┼───────┼───────┼───────────────────────╯
+//                         |       |       |  (0)  |     |       |       |       |
+//                         ╰───────┴───────┴───────╯     ╰───────┴───────┴───────╯
+                        bindings = <
+          &trans        &trans         &trans         &trans         &trans         &trans         &fmsc SCRL_UP    &fmsc SCRL_LEFT  &fmmv MOVE_UP   &fmsc SCRL_RIGHT  &trans         &trans
+          &trans        &trans         &trans         &trans         &trans         &trans         &fmsc SCRL_DOWN  &fmmv MOVE_LEFT  &fmmv MOVE_DOWN &fmmv MOVE_RIGHT  &trans         &trans
+          &trans        &trans         &trans         &trans         &trans         &trans         &trans           &trans           &trans          &trans            &trans         &trans
+                                             &trans         &trans          &trans         &trans      &trans       &trans
+                        >;
+                };
+                slow_mouse_layer {
+// ╭───────┬───────┬───────┬───────┬───────┬───────╮     ╭───────┬───────┬───────┬───────┬───────┬───────╮
+// |       |       |       |       |       |       |     |       |       | MV_UP |       |       |       | x 1/2
+// |       |       |       |       |       |       |     |       | MV_LT | MV_DN | MV_RT |       |       | x 1/2
+// |       |       |       |       |       |  (1)  |     |       |       |       |       |       |       |
+// ╰───────┴───────┴───────┼───────┼───────┼───────┤     ├───────┼───────┼───────┼───────────────────────╯
+//                         |       |       |  (0)  |     |       |       |       |
+//                         ╰───────┴───────┴───────╯     ╰───────┴───────┴───────╯
+                        bindings = <
+          &trans        &trans         &trans         &trans         &trans         &trans         &trans           &trans           &smmv MOVE_UP   &trans            &trans         &trans
+          &trans        &trans         &trans         &trans         &trans         &trans         &trans           &smmv MOVE_LEFT  &smmv MOVE_DOWN &smmv MOVE_RIGHT  &trans         &trans
+          &trans        &trans         &trans         &trans         &trans         &trans         &trans           &trans           &trans          &trans            &trans         &trans
+                                             &trans         &trans          &trans         &trans      &trans       &trans
+                        >;
+                };
+                button_layer { // to work with an external pointing device
+// ╭───────┬───────┬───────┬───────┬───────┬───────╮     ╭───────┬───────┬───────┬───────┬───────┬───────╮
+// | REDO1 |  ESC  |  CUT  | COPY  | PASTE | UNDO  |     |       |       |       |       |       |       |
+// | REDO2 |  LGUI |  LALT | LSHFT | LCTRL | UNTOG |     |       |       |       |       |       |       |
+// |       |       |       |       |  DEL  |  ALL  |     |       |       |       |       |       |       |
+// ╰───────┴───────┴───────┼───────┼───────┼───────┤     ├───────┼───────┼───────┼───────────────────────╯
+//                         | MCLK  | LCLK  | RCLK  |     |       |       |       |
+//                         ╰───────┴───────┴───────╯     ╰───────┴───────┴───────╯
+                        bindings = <
+          &kp LC(Y)     &kp ESC       &kp LC(X)     &kp LC(C)     &kp LC(V)     &kp LC(Z)     &none           &none           &none          &none            &none         &none
+          &kp LC(LS(Z)) &kp LGUI      &kp LALT      &kp LSHFT     &kp LCTRL     &tog BTN      &none           &none           &none          &none            &none         &none
+          &none         &none         &none         &none         &kp DEL       &kp LC(A)     &none           &none           &none          &none            &none         &none
+                                                    &mkp MCLK     &mkp LCLK     &mkp RCLK     &none           &none           &none
                         >;
                 };
         };
 };
-
