@@ -502,8 +502,8 @@
 //                         |       |       |  (0)  |     |       |       |       |
 //                         ╰───────┴───────┴───────╯     ╰───────┴───────┴───────╯
                         bindings = <
-          &trans        &trans         &trans         &trans         &trans         &trans         &msc SC_FUP     &msc SC_FLEFT   &mmv MV_FUP    &msc SC_FRIGHT   &trans         &trans
-          &trans        &trans         &trans         &trans         &trans         &trans         &msc SC_FDOWN   &mmv MV_FLEFT   &mmv MV_FDOWN  &mmv MV_FRIGHT   &trans         &trans
+          &trans        &trans         &trans         &trans         &trans         &trans         &trans          &trans          &trans         &trans           &trans         &trans
+          &trans        &trans         &trans         &trans         &trans         &trans         &trans          &trans          &trans         &trans           &trans         &trans
           &trans        &trans         &trans         &trans         &trans         &trans         &trans          &trans          &trans         &trans           &trans         &trans
                                              &trans         &trans          &trans         &trans      &trans       &trans
                         >;
@@ -517,9 +517,9 @@
 //                         |       |       |  (0)  |     |       |       |       |
 //                         ╰───────┴───────┴───────╯     ╰───────┴───────┴───────╯
                         bindings = <
-          &trans        &trans         &trans         &trans         &trans         &trans         &msc SC_SUP    &msc SC_SLEFT   &mmv MV_SUP    &msc SC_SRIGHT  &trans         &trans
-          &trans        &trans         &trans         &trans         &trans         &trans         &msc SC_SDOWN  &mmv MV_SLEFT   &mmv MV_SDOWN  &mmv MV_SRIGHT  &trans         &trans
-          &trans        &trans         &trans         &trans         &trans         &trans         &trans         &trans          &trans         &trans          &trans         &trans
+          &trans        &trans         &trans         &trans         &trans         &trans         &trans          &trans          &trans         &trans           &trans         &trans
+          &trans        &trans         &trans         &trans         &trans         &trans         &trans          &trans          &trans         &trans           &trans         &trans
+          &trans        &trans         &trans         &trans         &trans         &trans         &trans          &trans          &trans         &trans           &trans         &trans
                                              &trans         &trans          &trans         &trans      &trans       &trans
                         >;
                 };
